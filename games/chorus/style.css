@@ -1,0 +1,103 @@
+/* Chorus — the Rare Friends palette: canonical white pixels on black, accent #CCFF00. */
+.chorus {
+  --ink: #05060a;
+  --accent: #ccff00;
+  --line: rgba(255, 255, 255, 0.14);
+  --dim: rgba(255, 255, 255, 0.58);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2px, 0.9vh, 10px);
+  box-sizing: border-box;
+  /* Keep clear of the runtime's own bottom-left and bottom-right controls. */
+  padding: clamp(6px, 1.6vh, 16px) clamp(8px, 2vw, 22px) clamp(40px, 8.5vh, 60px);
+  background:
+    radial-gradient(120% 90% at 50% 8%, #101426 0%, var(--ink) 62%),
+    var(--ink);
+  color: #fff;
+  font: 500 clamp(10px, 1.55vh, 14px) / 1.35 ui-sans-serif, system-ui, sans-serif;
+  overflow: hidden;
+}
+.chorus button {
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.45em 1.05em;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+.chorus button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.4); }
+.chorus button:disabled { opacity: 0.38; cursor: not-allowed; }
+.chorus button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chorus .rf-frame-primary { background: var(--accent); border-color: var(--accent); color: #05060a; }
+.chorus .rf-frame-primary:hover:not(:disabled) { background: #dbff3d; border-color: #dbff3d; }
+
+.chorus-boot { display: grid; place-content: center; gap: 12px; height: 100%; color: #fff; background: #05060a; font: 500 14px/1.4 ui-sans-serif, system-ui, sans-serif; text-align: center; }
+
+.chorus-hud { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.chorus-identity { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.chorus-identity strong { letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); font-size: 1.05em; }
+.chorus-identity span { color: var(--dim); font-size: 0.86em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chorus-meters { display: flex; gap: clamp(6px, 1.4vw, 14px); color: var(--dim); font-variant-numeric: tabular-nums; font-size: 0.86em; }
+.chorus-meters span { white-space: nowrap; }
+.chorus-resonance { color: var(--accent); }
+
+.chorus-stage { position: relative; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(4px, 1vh, 12px); }
+.chorus-sim { position: absolute; top: 0; left: 0; margin: 0; font-size: 0.76em; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.34); }
+.chorus-canvas { display: block; flex: 1 1 auto; min-height: 0; max-height: 100%; width: auto; max-width: 100%; aspect-ratio: 1; image-rendering: pixelated; }
+.chorus-waiting, .chorus-art-error { position: absolute; color: var(--dim); text-align: center; display: grid; gap: 10px; justify-items: center; }
+
+.chorus-echo { display: grid; justify-items: center; gap: clamp(3px, 0.8vh, 8px); flex: 0 0 auto; }
+.chorus-echo p { margin: 0; color: var(--accent); font-size: 0.9em; text-align: center; }
+.chorus-tally { margin: 0; font-size: 0.8em; color: var(--dim); font-variant-numeric: tabular-nums; }
+.chorus-pad { min-width: clamp(140px, 34vw, 240px); min-height: clamp(38px, 8vh, 56px); font-size: 1.05em; letter-spacing: 0.16em; text-transform: uppercase; background: rgba(204, 255, 0, 0.14); border-color: var(--accent); touch-action: manipulation; }
+.chorus-pad:active { transform: scale(0.97); background: rgba(204, 255, 0, 0.3); }
+.chorus-skip { font-size: 0.82em; padding: 0.3em 0.9em; }
+
+.chorus-rail { display: grid; grid-template-columns: repeat(8, 1fr); gap: clamp(3px, 0.6vw, 8px); list-style: none; margin: 0; padding: 0; }
+.chorus-slot { display: grid; gap: 1px; padding: clamp(3px, 0.8vh, 8px) 4px; border: 1px solid var(--line); border-radius: 8px; text-align: center; background: rgba(255, 255, 255, 0.03); transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease; min-width: 0; }
+.chorus-numeral { font-weight: 700; color: var(--dim); font-size: 0.92em; }
+.chorus-name { font-size: 0.72em; color: rgba(255, 255, 255, 0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chorus-count { font-size: 0.7em; color: rgba(255, 255, 255, 0.3); font-variant-numeric: tabular-nums; }
+.chorus-slot.held { background: rgba(204, 255, 0, 0.1); border-color: rgba(204, 255, 0, 0.45); }
+.chorus-slot.held .chorus-numeral { color: var(--accent); }
+.chorus-slot.held .chorus-name { color: rgba(255, 255, 255, 0.72); }
+.chorus-slot.held .chorus-count { color: var(--accent); }
+.chorus-slot.mastered { border-color: var(--accent); }
+.chorus-slot.lit { background: rgba(204, 255, 0, 0.3); box-shadow: 0 0 0 1px var(--accent); }
+
+.chorus-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(4px, 1vw, 10px); }
+.chorus-feedback { margin: 0; text-align: center; color: var(--dim); font-size: 0.84em; min-height: 1.3em; }
+
+.chorus-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
+.chorus-row span { display: grid; }
+.chorus-row small { opacity: 0.68; }
+.chorus-note { opacity: 0.74; font-size: 0.9em; }
+
+/* Phone-sized frames: drop the phrase names and tighten everything. */
+@media (max-width: 560px) {
+  /* The voice, key and tempo are the proof that this song is the Friend's own,
+     so they stay visible; only the per-slot phrase names are dropped. */
+  .chorus-name { display: none; }
+  .chorus-hud { gap: 2px 8px; }
+  .chorus-identity { width: 100%; }
+  .chorus-rail { gap: 3px; }
+  .chorus-actions button { padding: 0.4em 0.7em; font-size: 0.92em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chorus button, .chorus-slot { transition: none; }
+  .chorus-pad:active { transform: none; }
+}
+
+/* The note ribbon: every note is a bar whose height is its pitch. This is the
+   visual twin of the audio, so the game reads identically with sound off. */
+.chorus-ribbon { display: flex; align-items: flex-end; justify-content: center; gap: clamp(3px, 0.8vw, 7px); width: min(460px, 94%); height: clamp(30px, 8.5vh, 68px); flex: 0 0 auto; pointer-events: none; border-bottom: 1px solid var(--line); }
+.chorus-bar { flex: 1 1 0; min-width: 5px; max-width: 54px; border-radius: 3px 3px 0 0; background: rgba(255, 255, 255, 0.16); transition: background 90ms linear, box-shadow 90ms linear; }
+.chorus-bar.hit { background: rgba(204, 255, 0, 0.5); }
+.chorus-bar.now { background: var(--accent); box-shadow: 0 0 12px rgba(204, 255, 0, 0.7); }
+@media (prefers-reduced-motion: reduce) { .chorus-bar { transition: none; } }

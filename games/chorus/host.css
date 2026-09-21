@@ -1,0 +1,20 @@
+/*
+ * Trusted runtime layout for Chorus.
+ *
+ * The SDK's default frame is 960 x 640 (3:2). On a 360 px phone that is only
+ * about 240 px tall, which cannot hold the Friend, the note ribbon, the phrase
+ * rail and the controls at a usable size. These variables are read by the
+ * runtime wrapper, and host.css is ordinary CSS, so the frame becomes portrait
+ * on narrow screens and keeps the reference landscape layout everywhere else.
+ */
+:root {
+  --rf-game-max-width: 960px;
+  --rf-game-aspect-ratio: 3 / 2;
+}
+
+@media (max-width: 700px) {
+  :root {
+    --rf-game-max-width: 480px;
+    --rf-game-aspect-ratio: 3 / 4;
+  }
+}

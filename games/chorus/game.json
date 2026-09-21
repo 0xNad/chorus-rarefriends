@@ -1,0 +1,15 @@
+{
+  "name": "Chorus",
+  "consumable": "Tone",
+  "price": "1000000000000000000",
+  "outcomes": [
+    { "name": "Verse I", "chanceBps": 1900, "reward": "550000000000000000" },
+    { "name": "Verse II", "chanceBps": 1800, "reward": "550000000000000000" },
+    { "name": "Verse III", "chanceBps": 1700, "reward": "600000000000000000" },
+    { "name": "Verse IV", "chanceBps": 1500, "reward": "650000000000000000" },
+    { "name": "Bridge", "chanceBps": 1300, "reward": "900000000000000000" },
+    { "name": "Counter", "chanceBps": 1000, "reward": "1200000000000000000" },
+    { "name": "Descant", "chanceBps": 600, "reward": "2000000000000000000" },
+    { "name": "Refrain", "chanceBps": 200, "reward": "7000000000000000000" }
+  ]
+}
