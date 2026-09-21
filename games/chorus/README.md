@@ -128,10 +128,15 @@ node games/chorus/test.mjs 360 ./artifacts/chorus-360.png
 ```
 
 `test.mjs` drives the real runtime in headless Chromium with the SDK's read-only
-wallet/RPC fixtures and asserts the full loop: artwork resolves, the composed
-voice matches the fixture Friend, buy → capture → echo → hold, play, redeem
-releases the phrase, and the mute and reduced-motion controls work. Requires
-`playwright` and Chromium.
+wallet/RPC fixtures. It asserts that the artwork resolves, the composed voice
+matches the fixture Friend, buy → capture → hold works, the capture and play
+controls stay locked while a phrase is playing (with a spare Tone in hand), the
+echo masters the phrase when played on the composed 77 BPM cadence, Resonance
+rises without touching the ledger, redeeming releases the phrase, and the mute
+and reduced-motion controls work. Requires `playwright` and Chromium.
+
+The fixture pins the preview roll to outcome 1, so the full-resonance state and
+the rarer phrases are checked by hand rather than by the harness.
 
 ## Known limitations
 

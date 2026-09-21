@@ -18,7 +18,7 @@ const ECHO_WINDOW_MS = 160;
 const MASTERY = 0.6;
 const rf = (value: bigint) => `${formatGameAmount(value, 18)} RF`;
 
-type Menu = "buy" | "inventory" | "settings" | "about" | null;
+type Menu = "inventory" | "settings" | "about" | null;
 type Stage =
   | { kind: "idle" }
   | { kind: "revealing"; outcomeId: number }
@@ -42,6 +42,7 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
   const [beamNote, setBeamNote] = useState(-1);
   const [hitNotes, setHitNotes] = useState<readonly number[]>([]);
   const [artAttempt, setArtAttempt] = useState(0);
+  const [spentRf, setSpentRf] = useState(0n);
 
   const synth = useRef<ChorusSynth | null>(null);
   const cues = useRef<FriendSoundKit | null>(null);
@@ -75,7 +76,7 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
     cues.current = createFriendSoundKit({ muted: false });
     setSnapshot(null); setSprites(null); setMenu(null); setStage({ kind: "idle" });
     setError(""); setArtError(""); setMessage(""); setBusy(false);
-    setMuted(false); setResonance(0); setMastered([]); setLit(null);
+    setMuted(false); setResonance(0); setMastered([]); setLit(null); setSpentRf(0n);
     locked.current = false;
 
     // The runtime leaves its loading state only once the child reads its snapshot.
@@ -335,11 +336,16 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
   const pendingPlay = snapshot.plays.some(play => play.outcomeId === null);
   const canCapture = Boolean(song) && (pendingPlay || snapshot.consumables > 0n);
   const performing = stage.kind === "echo";
+  // Any non-idle stage owns the audio and the timers; nothing else may start.
+  const engaged = stage.kind !== "idle";
   // The phrase currently sounding or being echoed, drawn as pitch-height bars.
   const ribbon = song && lit !== null && stage.kind !== "idle" ? song.phrases[lit] : null;
-  const spent = snapshot.stake - maxPrize * 10n;
 
-  return <section className="chorus" aria-label="Chorus" aria-busy={busy} data-stage={stage.kind}>
+
+  return <section className="chorus" aria-label="Chorus" aria-busy={busy} data-stage={stage.kind}
+    data-reduced-motion={reducedMotion ? "true" : undefined} data-complete={complete ? "true" : undefined}>
+    {/* Background is inert while a menu owns the frame, so Tab cannot reach it. */}
+    <div className="chorus-body" inert={Boolean(menu) || paused || undefined}>
     <header className="chorus-hud">
       <div className="chorus-identity">
         <strong>Chorus</strong>
@@ -384,6 +390,7 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
       {definition.outcomes.map((outcome, index) => {
         const count = held[index];
         return <li key={outcome.name}
+          aria-label={`${outcome.name}: ${count > 0 ? `held${count > 1 ? `, ${count} copies` : ""}` : "not yet captured"}`}
           className={`chorus-slot${count > 0 ? " held" : ""}${lit === index ? " lit" : ""}${mastered.includes(index) ? " mastered" : ""}`}>
           <span className="chorus-numeral" aria-hidden="true">{ROMAN[index]}</span>
           <span className="chorus-name">{outcome.name}</span>
@@ -393,31 +400,38 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
     </ol>
 
     <div className="chorus-actions">
-      <button type="button" className="rf-frame-primary" disabled={!canBuy || busy || paused || performing}
+      <button type="button" className="rf-frame-primary" disabled={!canBuy || busy || paused || engaged}
         onClick={() => void act(async () => {
           await client.buy(1n);
+          setSpentRf(total => total + definition.price);
           void cues.current?.unlock();
           cues.current?.play("purchase");
           setMessage("One simulated Tone added.");
         })}>Buy Tone · {rf(definition.price)}</button>
-      <button type="button" disabled={!canCapture || busy || paused || performing} onClick={() => void capture()}>
+      <button type="button" disabled={!canCapture || busy || paused || engaged} onClick={() => void capture()}>
         {pendingPlay ? "Finish capture" : "Capture a phrase"}
       </button>
-      <button type="button" disabled={busy || paused || performing || heldCount === 0 || stage.kind === "song"}
+      <button type="button" disabled={busy || paused || engaged || heldCount === 0}
         onClick={() => void playSong()}>{complete ? "Play the whole song" : `Play song · ${heldCount}`}</button>
       {stage.kind === "song" && <button type="button" onClick={stopEverything}>Stop</button>}
-      <button type="button" onClick={() => setMenu("inventory")} disabled={busy || performing}>Phrases</button>
-      <button type="button" onClick={() => setMenu("settings")} disabled={performing}>Settings</button>
+      <button type="button" onClick={() => { stopEverything(); setMenu("inventory"); }} disabled={busy}>Phrases</button>
+      <button type="button" onClick={() => { stopEverything(); setMenu("settings"); }}>Settings</button>
+      <button type="button" onClick={() => { stopEverything(); setMenu("about"); }}>About</button>
     </div>
 
     <p className="chorus-feedback" role={error ? "alert" : "status"}>
-      {error || message || (busy ? "Waiting for the runtime…" : complete
-        ? "Every phrase is held. Play the whole song."
+      {error || message || (busy ? "Waiting for the runtime…"
+        : !canBuy && snapshot.consumables === 0n && !pendingPlay
+          ? (snapshot.rfBalance < definition.price
+            ? "Not enough simulated RF for another Tone."
+            : "Purchases pause until the game holds enough free backing.")
+        : complete ? "Full resonance — every phrase is held. Play the whole song."
         : "Buy a Tone, capture a phrase, echo it back.")}
     </p>
+    </div>
 
     {menu && <GameMenu
-      title={menu === "inventory" ? "Phrases held" : menu === "settings" ? "Settings" : menu === "buy" ? "Tones" : "About Chorus"}
+      title={menu === "inventory" ? "Phrases held" : menu === "settings" ? "Settings" : "About Chorus"}
       onClose={busy ? undefined : () => { setMenu(null); setError(""); }}>
       {menu === "inventory" ? <>
         <p>A phrase you hold is audible in your song. Redeeming it returns {"its"} simulated RF and removes it from the arrangement.</p>
@@ -447,7 +461,7 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
         <p className="chorus-note">
           Simulated RF, Tones and phrases last for this runtime session only; reloading starts a new one.
           The SDK supplies wallet connection and fresh ownership verification.
-          Simulated RF committed this session: {rf(spent > 0n ? spent : 0n)}.
+          Simulated RF spent on Tones this session: {rf(spentRf)}.
         </p>
       </> : <>
         <p>Every Friend's song comes from its own on-chain data: {"familyOf(tokenId)"} chooses the voice and scale, {"seedOf(tokenId)"} sets the key, tempo and melody.</p>

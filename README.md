@@ -118,14 +118,33 @@ npm run build           # static preview bundle into ./dist
 | `friendsdk check` | valid; expected reward 0.9 RF, maximum 7 RF |
 | Browser check @ 960 px | pass |
 | Browser check @ 360 px | pass |
+| Echo scoring played in time | 4/4 matched, phrase mastered |
 | FriendSDK `npm test` (v0.1.2 checkout) | 116 tests, 114 pass, 0 fail, 2 skipped (contract tests skip without Foundry) |
 | `tsc --noEmit` | clean |
 
 The browser check drives the **real** runtime in headless Chromium using the SDK's
-read-only wallet/RPC fixtures, asserting the whole loop: artwork resolves, the
-composed voice matches the fixture Friend, buy → capture → echo → hold, play song,
-redeem releases the phrase, and the mute and reduced-motion controls work. Mocks
-are confined to that automated check; `dev` and `build` keep the real ownership gate.
+read-only wallet/RPC fixtures. It asserts:
+
+- the Friend's canonical artwork resolves from the registry;
+- the composed voice, key and tempo match the fixture Friend (family 5, seed 7730
+  produces Hover glass in D at 77 BPM);
+- buy → capture → hold, and that the phrase lights its rail slot;
+- **the capture and play controls stay locked while a phrase is playing**, with a
+  spare Tone in hand, so a second capture cannot start over the first;
+- **the echo scores when played in time** — the pad is driven on the composed
+  77 BPM cadence from inside the page and must master the phrase;
+- Resonance rises while the ledger is untouched, since mastery is non-financial;
+- redeeming releases the phrase and darkens the slot;
+- the mute and reduced-motion controls work, and the reduced-motion toggle
+  reaches the CSS and not only the canvas.
+
+Mocks are confined to that automated check; `dev` and `build` keep the real
+ownership gate.
+
+**Not covered by the automated check:** the fixture pins the preview roll, so
+every settle resolves to outcome 1. The full-resonance state (all eight phrases
+held) and the rarer phrases are therefore exercised by hand rather than by the
+harness.
 
 ## Layout
 

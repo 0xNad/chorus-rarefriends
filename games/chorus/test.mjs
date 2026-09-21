@@ -37,19 +37,43 @@ const result = await testGame(here, {
     assert.equal(await rail.count(), 8, "eight phrase slots");
     await game.getByText("0/8 phrases", { exact: true }).waitFor();
 
+    // Buy two, so the lock assertions below are meaningful: with a Tone still
+    // in hand, an unguarded Capture button really could start a second capture
+    // over the top of the first. With only one Tone it would read as disabled
+    // simply because there was nothing left to spend.
     await game.getByRole("button", { name: /^Buy Tone/ }).click();
     await confirm();
     await game.getByText("1 Tones", { exact: true }).waitFor();
+    await game.getByRole("button", { name: /^Buy Tone/ }).click();
+    await confirm();
+    await game.getByText("2 Tones", { exact: true }).waitFor();
 
     // Using a Tone is confirmed in the trusted runtime; in preview mode the
     // settle that follows it is not a mutation, so it needs no second prompt.
     await game.getByRole("button", { name: "Capture a phrase", exact: true }).click();
     await confirm();
+    await game.getByText("1 Tones", { exact: true }).waitFor();
+
+    // Regression: while a phrase is playing or being echoed, the capture and
+    // play controls must stay locked. They did not, which let a second capture
+    // start mid-reveal and spend another Tone over the top of the first.
+    assert.equal(
+      await game.getByRole("button", { name: "Capture a phrase", exact: true }).isDisabled(),
+      true, "capture stays locked while a phrase is playing");
+    assert.equal(
+      await game.getByRole("button", { name: /^Play song/ }).isDisabled(),
+      true, "play song stays locked while a phrase is playing");
 
     // The echo is offered after the phrase plays, and is always skippable.
     const skip = game.getByRole("button", { name: "Skip the echo", exact: true });
     await skip.waitFor({ timeout: 20_000 });
+    assert.equal(
+      await game.getByRole("button", { name: "Capture a phrase", exact: true }).isDisabled(),
+      true, "capture stays locked during the echo");
     await skip.click();
+
+    // The spare Tone survived: exactly one capture ran.
+    await game.getByText("1 Tones", { exact: true }).waitFor();
 
     // Outcome 1 is Verse I; holding it must light the first rail slot.
     await game.getByText("1/8 phrases", { exact: true }).waitFor();
@@ -76,16 +100,41 @@ const result = await testGame(here, {
     await game.getByRole("button", { name: "Sound on", exact: true }).waitFor();
     await game.getByLabel("Reduce motion").check();
     await game.getByRole("button", { name: /^Close / }).first().click();
+    // The in-game toggle must reach the CSS, not only the canvas.
+    assert.equal(await game.locator(".chorus").getAttribute("data-reduced-motion"), "true",
+      "Reduce motion is applied to the game root");
 
-    // Leave the screenshot on a held phrase rather than an empty rail.
+    // The About panel explains where the song comes from.
+    await game.getByRole("button", { name: "About", exact: true }).click();
+    await game.getByText(/familyOf\(tokenId\)/).first().waitFor();
+    await game.getByRole("button", { name: /^Close / }).first().click();
+
+    // Echo scoring, played in time. Friend #7730 composes at 77 BPM and Verse I
+    // is four even beats, so the pad is driven from inside the page on that
+    // cadence: keeping the timing path in-page avoids adding driver round-trip
+    // latency to every note, which would read as a miss.
     await game.getByRole("button", { name: /^Buy Tone/ }).click();
     await confirm();
     await game.getByRole("button", { name: "Capture a phrase", exact: true }).click();
     await confirm();
-    const skipAgain = game.getByRole("button", { name: "Skip the echo", exact: true });
-    await skipAgain.waitFor({ timeout: 20_000 });
-    await skipAgain.click();
+    const beat = 60_000 / 77;
+    const performed = await game.locator(".chorus").evaluate(async (root, ms) => {
+      // Arm before the pad exists so the first note is not already late.
+      const pad = await new Promise(resolve => {
+        const tick = () => { const node = document.querySelector(".chorus-pad"); node ? resolve(node) : setTimeout(tick, 8); };
+        tick();
+      });
+      for (let index = 0; index < 4; index++) {
+        pad.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+        if (index < 3) await new Promise(resolve => setTimeout(resolve, ms));
+      }
+      await new Promise(resolve => setTimeout(resolve, 450));
+      return document.querySelector(".chorus-feedback")?.textContent ?? "";
+    }, beat);
+    assert.match(performed, /mastered/, `echo played in time should master the phrase, got: ${performed}`);
     await game.getByText("1/8 phrases", { exact: true }).waitFor();
+    // Mastery is non-financial and must not touch the ledger.
+    assert.match(await game.locator(".chorus-resonance").textContent() ?? "", /Resonance [1-9]/, "Resonance rises");
   },
 });
 console.log("chorus browser check passed:", JSON.stringify(result));
