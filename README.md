@@ -192,7 +192,8 @@ browsers. The automated browser check covers redeem against the real runtime.
 ## Checks
 
 ```sh
-npm run verify          # game validation + both browser checks
+npm run verify          # game validation, typecheck, both browser checks
+npm run verify:live     # read real Friends from mainnet and compose their songs
 npm run build           # static preview bundle into ./dist
 ```
 
@@ -203,7 +204,7 @@ npm run build           # static preview bundle into ./dist
 | Browser check @ 360 px | pass |
 | Echo scoring played in time | 4/4 matched, phrase mastered |
 | FriendSDK `npm test` (v0.1.2 checkout) | 116 tests, 114 pass, 0 fail, 2 skipped (contract tests skip without Foundry) |
-| `tsc --noEmit` | clean |
+| `tsc` on the game sources | clean, `strict` with `exactOptionalPropertyTypes` |
 
 The browser check drives the **real** runtime in headless Chromium using the SDK's
 read-only wallet/RPC fixtures. It asserts:

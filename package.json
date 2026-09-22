@@ -14,9 +14,10 @@
     "check": "friendsdk check ./games/chorus",
     "test": "node ./games/chorus/test.mjs 960 ./artifacts/chorus-960.png",
     "test:phone": "node ./games/chorus/test.mjs 360 ./artifacts/chorus-360.png",
-    "verify": "npm run check && npm run test && npm run test:phone",
+    "verify": "npm run check && npm run typecheck && npm run test && npm run test:phone",
     "verify:live": "node --experimental-strip-types --no-warnings scripts/verify-live-friends.mjs",
-    "artifact:friends": "node --experimental-strip-types --no-warnings scripts/render-friend-sheet.mjs ./artifacts/real-friends.png"
+    "artifact:friends": "node --experimental-strip-types --no-warnings scripts/render-friend-sheet.mjs ./artifacts/real-friends.png",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@rarefriends/friendsdk": "file:vendor/rarefriends-friendsdk-0.1.2.tgz",
@@ -24,6 +25,9 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "playwright": "^1.63.0"
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "playwright": "^1.63.0",
+    "typescript": "^5.9.3"
   }
 }

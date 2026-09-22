@@ -124,10 +124,13 @@ distinct songs, and every note falls between E2 (82 Hz) and G#6 (1661 Hz).
 ## Checks
 
 ```sh
-npx friendsdk check games/chorus
-node games/chorus/test.mjs 960 ./artifacts/chorus-960.png
-node games/chorus/test.mjs 360 ./artifacts/chorus-360.png
+npm run verify   # friendsdk check, typecheck, and both browser checks
 ```
+
+The game's own TypeScript is typechecked under `strict` with
+`noUnusedLocals`, `noUnusedParameters` and `exactOptionalPropertyTypes`. The
+SDK's own `tsconfig.json` covers only `src/**`, so running its typecheck does
+not check game code; this project carries its own.
 
 `test.mjs` drives the real runtime in headless Chromium with the SDK's read-only
 wallet/RPC fixtures. It asserts that the artwork resolves, the composed voice

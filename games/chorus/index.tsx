@@ -7,7 +7,7 @@ import { formatGameAmount } from "@rarefriends/friendsdk/ui";
 import { createFriendReader, spriteFrame, type GenerationSprites } from "@rarefriends/friendsdk/sprites";
 import { createFriendSoundKit, type FriendSoundKit } from "@rarefriends/friendsdk/sounds";
 import type { GameSnapshot } from "@rarefriends/friendsdk/game";
-import { composeSong, PHRASE_COUNT, type Phrase, type Song } from "./composition.js";
+import { composeSong, PHRASE_COUNT, type Song } from "./composition.js";
 import { createChorusSynth, type ChorusSynth } from "./synth.js";
 import "@rarefriends/friendsdk/frame.css";
 import "./style.css";
@@ -235,12 +235,14 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
       later(() => {
         if (version !== epoch.current || stageRef.current.kind !== "revealing") return;
         usedRef.current = new Set();
-        const base = phrase.notes.reduce<number[]>((offsets, note, index) => {
-          const previous = offsets[index - 1] ?? 0;
-          const gap = index === 0 ? 0 : phrase.notes[index - 1].beats * song.secondsPerBeat * 1000;
-          offsets.push(previous + gap);
-          return offsets;
-        }, []);
+        // Note onsets in milliseconds from the start of the echo, taken from the
+        // composition rather than the audio clock so muted play scores the same.
+        const base: number[] = [];
+        let cursor = 0;
+        for (let index = 0; index < phrase.notes.length; index++) {
+          if (index > 0) cursor += phrase.notes[index - 1].beats * song.secondsPerBeat * 1000;
+          base.push(cursor);
+        }
         setStage({ kind: "echo", outcomeId, expected: base, startedAt: performance.now() });
         later(() => {
           if (version === epoch.current && stageRef.current.kind === "echo") finishEcho(outcomeId, base.length);
@@ -448,7 +450,7 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
 
     {menu && <GameMenu
       title={menu === "inventory" ? "Phrases held" : menu === "settings" ? "Settings" : "About Chorus"}
-      onClose={busy ? undefined : () => { setMenu(null); setError(""); }}>
+      {...(busy ? {} : { onClose: () => { setMenu(null); setError(""); } })}>
       {menu === "inventory" ? <>
         <p>A phrase you hold is audible in your song. Redeeming it returns {"its"} simulated RF and removes it from the arrangement.</p>
         {definition.outcomes.map((outcome, index) => <div className="chorus-row" key={outcome.name}>
