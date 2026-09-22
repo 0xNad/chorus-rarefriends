@@ -135,6 +135,13 @@ const result = await testGame(here, {
     await game.getByText("1/8 phrases", { exact: true }).waitFor();
     // Mastery is non-financial and must not touch the ledger.
     assert.match(await game.locator(".chorus-resonance").textContent() ?? "", /Resonance [1-9]/, "Resonance rises");
+
+    // A pack is one trusted prompt for five Tones, so filling the rail does not
+    // cost a confirmation per Tone.
+    const before = Number((await game.locator(".chorus-meters").textContent() ?? "").match(/(\d+) Tones/)?.[1] ?? "-1");
+    await game.getByRole("button", { name: /^Buy 5/ }).click();
+    await confirm();
+    await game.getByText(`${before + 5} Tones`, { exact: true }).waitFor();
   },
 });
 console.log("chorus browser check passed:", JSON.stringify(result));

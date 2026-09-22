@@ -16,6 +16,8 @@ const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"] as const;
 const PIXEL = 16;
 const ECHO_WINDOW_MS = 160;
 const MASTERY = 0.6;
+/** A pack size, so filling the rail does not cost one trusted prompt per Tone. */
+const PACK = 5n;
 const rf = (value: bigint) => `${formatGameAmount(value, 18)} RF`;
 
 type Menu = "inventory" | "settings" | "about" | null;
@@ -332,7 +334,13 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
   if (snapshot.friendId !== friendId) return <p role="alert">This session does not match the selected Friend.</p>;
 
   const maxPrize = definition.outcomes.reduce((max, item) => (item.reward > max ? item.reward : max), 0n);
-  const canBuy = snapshot.rfBalance >= definition.price && snapshot.freeStake >= maxPrize;
+  // Mirrors the SDK's own purchase rule: every Tone reserves its maximum prize.
+  const affordable = (quantity: bigint) =>
+    snapshot.rfBalance >= definition.price * quantity
+    && snapshot.freeStake >= maxPrize
+    && snapshot.freeStake + definition.price * quantity >= maxPrize * quantity;
+  const canBuy = affordable(1n);
+  const canBuyPack = affordable(PACK);
   const pendingPlay = snapshot.plays.some(play => play.outcomeId === null);
   const canCapture = Boolean(song) && (pendingPlay || snapshot.consumables > 0n);
   const performing = stage.kind === "echo";
@@ -408,6 +416,14 @@ export default function Chorus({ friendId, client, paused }: GameComponentProps)
           cues.current?.play("purchase");
           setMessage("One simulated Tone added.");
         })}>Buy Tone · {rf(definition.price)}</button>
+      <button type="button" disabled={!canBuyPack || busy || paused || engaged}
+        onClick={() => void act(async () => {
+          await client.buy(PACK);
+          setSpentRf(total => total + definition.price * PACK);
+          void cues.current?.unlock();
+          cues.current?.play("purchase");
+          setMessage(`${PACK} simulated Tones added.`);
+        })}>Buy {PACK.toString()} · {rf(definition.price * PACK)}</button>
       <button type="button" disabled={!canCapture || busy || paused || engaged} onClick={() => void capture()}>
         {pendingPlay ? "Finish capture" : "Capture a phrase"}
       </button>

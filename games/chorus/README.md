@@ -35,7 +35,9 @@ implement any of those.
 
 ## How to play
 
-1. **Buy a Tone** — 1 simulated RF. Confirmed in the SDK's trusted frame.
+1. **Buy a Tone** — 1 simulated RF, confirmed in the SDK's trusted frame. **Buy 5**
+   takes five for 5 RF under a single confirmation, because every economy action
+   is a trusted prompt and filling the rail one Tone at a time is tedious.
 2. **Capture a phrase** — spends the Tone. One phrase of your Friend's song is
    drawn from the published table below, then plays.
 3. **Echo it** — tap the pad or press **Space** once per note. The echo is
@@ -59,7 +61,7 @@ phrase audible.
 | --- | --- |
 | Tap / click the pad | Echo a note |
 | **Space** or **Enter** | Echo a note |
-| Buttons | Buy, capture, play, redeem, settings |
+| Buttons | Buy one, buy five, capture, play, redeem, settings |
 
 Touch and keyboard are both supported. There is no character movement; this is
 not a walkable world.

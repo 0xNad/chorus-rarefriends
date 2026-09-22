@@ -44,7 +44,8 @@ which keeps this repository self-contained and reproducible.
 
 ## How to play
 
-1. **Buy a Tone** — 1 simulated RF, confirmed in the SDK's trusted frame.
+1. **Buy a Tone** — 1 simulated RF, confirmed in the SDK's trusted frame. **Buy 5**
+   takes five under one confirmation.
 2. **Capture a phrase** — spends the Tone and draws one phrase from the published
    table below, which then plays.
 3. **Echo it** — tap the pad or press **Space** once per note. Optional practice
@@ -155,9 +156,16 @@ Friend #1969
 
 A Friend nobody had composed for before, matching an independent chain read
 exactly. This confirms real-wallet selection, the ownership gate and live artwork
-and trait reads for an arbitrary holder-owned token. The session is freshly
-loaded — 20 RF, 0 Tones, 0/8 phrases — so it does not itself exercise the
-capture loop, which the automated browser check covers instead.
+and trait reads for an arbitrary holder-owned token.
+
+![Buying a Tone with a real wallet connected](artifacts/holder-buy-1969.png)
+
+The economy path with the same wallet: the SDK's trusted confirmation, labelled
+`Simulated RF. No transaction will be sent.`, and the HUD down to **18 RF for
+2 Tones** — exactly the published 1 RF price, with nothing signed.
+
+Still not exercised with a wallet connected: capture, echo, play and redeem. The
+automated browser check covers those against the real runtime.
 
 ## Accessibility
 
