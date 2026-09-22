@@ -70,6 +70,11 @@ const result = await testGame(here, {
     assert.equal(
       await game.getByRole("button", { name: "Capture a phrase", exact: true }).isDisabled(),
       true, "capture stays locked during the echo");
+    // Tapping in time means many fast taps in one place, which was selecting the
+    // pad label and the text around it.
+    assert.equal(
+      await game.locator(".chorus-pad").evaluate(node => getComputedStyle(node).userSelect),
+      "none", "the echo pad is not selectable");
     await skip.click();
 
     // The spare Tone survived: exactly one capture ran.

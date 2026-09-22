@@ -59,6 +59,20 @@
 .chorus-echo p { margin: 0; color: var(--accent); font-size: 0.9em; text-align: center; }
 .chorus-tally { margin: 0; font-size: 0.8em; color: var(--dim); font-variant-numeric: tabular-nums; }
 .chorus-pad { min-width: clamp(140px, 34vw, 240px); min-height: clamp(38px, 8vh, 56px); font-size: 1.05em; letter-spacing: 0.16em; text-transform: uppercase; background: rgba(204, 255, 0, 0.14); border-color: var(--accent); touch-action: manipulation; }
+/* Tapping the pad in time means many fast taps in one place, which was
+   selecting the pad label and the text around it. */
+.chorus button,
+.chorus-hud,
+.chorus-echo,
+.chorus-rail,
+.chorus-feedback,
+.chorus-sim {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.chorus-pad { touch-action: manipulation; }
+
 .chorus-pad:active { transform: scale(0.97); background: rgba(204, 255, 0, 0.3); }
 .chorus-skip { font-size: 0.82em; padding: 0.3em 0.9em; }
 

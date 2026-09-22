@@ -164,8 +164,19 @@ The economy path with the same wallet: the SDK's trusted confirmation, labelled
 `Simulated RF. No transaction will be sent.`, and the HUD down to **18 RF for
 2 Tones** — exactly the published 1 RF price, with nothing signed.
 
-Still not exercised with a wallet connected: capture, echo, play and redeem. The
-automated browser check covers those against the real runtime.
+![Echoing a captured phrase with a real wallet connected](artifacts/holder-echo-1969.png)
+
+The rest of the loop on the same wallet: two phrases captured and held —
+**Verse IV** and **Descant** — with a five-note echo in progress and
+**Resonance 10** on the clock.
+
+That Resonance is a cross-check rather than a screenshot claim. #1969's Descant
+is six notes, and the scoring formula gives a single matched note
+`round((1/6) × 60) = 10` — exactly what the HUD shows. Echo hit detection
+therefore works on real hardware, not only under the automated check.
+
+Still not exercised with a wallet connected: **redeem**, and phone wallet
+browsers. The automated browser check covers redeem against the real runtime.
 
 ## Accessibility
 
