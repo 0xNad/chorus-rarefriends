@@ -2,9 +2,11 @@
   "name": "chorus-rarefriends",
   "version": "1.0.0",
   "private": true,
-  "description": "Chorus — every Rare Friend has a song, composed from its own on-chain family and seed.",
+  "description": "Chorus \u2014 every Rare Friend has a song, composed from its own on-chain family and seed.",
   "type": "module",
-  "engines": { "node": ">=22.0.0" },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "friendsdk dev ./games/chorus",
     "dev:lan": "friendsdk dev ./games/chorus --host 0.0.0.0 --port 4173",
@@ -12,12 +14,16 @@
     "check": "friendsdk check ./games/chorus",
     "test": "node ./games/chorus/test.mjs 960 ./artifacts/chorus-960.png",
     "test:phone": "node ./games/chorus/test.mjs 360 ./artifacts/chorus-360.png",
-    "verify": "npm run check && npm run test && npm run test:phone"
+    "verify": "npm run check && npm run test && npm run test:phone",
+    "verify:live": "node --experimental-strip-types --no-warnings scripts/verify-live-friends.mjs",
+    "artifact:friends": "node --experimental-strip-types --no-warnings scripts/render-friend-sheet.mjs ./artifacts/real-friends.png"
   },
   "dependencies": {
     "@rarefriends/friendsdk": "file:vendor/rarefriends-friendsdk-0.1.2.tgz",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
-  "devDependencies": { "playwright": "^1.63.0" }
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
 }

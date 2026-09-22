@@ -122,8 +122,17 @@ export function composeSong(familyId: number, seed: number): Song {
   const bpm = voice.bpm + pick(17) - 8;
   const secondsPerBeat = 60 / bpm;
 
-  // The shared motif: three scale-degree steps in [-2, 3].
-  const motif = [pick(6) - 2, pick(6) - 2, pick(6) - 2];
+  // The shared motif: three scale-degree steps in [-2, 3]. Some seeds otherwise
+  // draw a near-static motif (say [0, 0, 1]), which gives that Friend a
+  // monotone song made mostly of repeated notes. Redraw deterministically until
+  // the motif actually moves: at least two non-zero steps and at least two
+  // distinct values, so every Friend gets a melody with real contour.
+  const drawMotif = () => [pick(6) - 2, pick(6) - 2, pick(6) - 2];
+  const singable = (steps: readonly number[]) =>
+    steps.filter(step => step !== 0).length >= 2 && new Set(steps).size >= 2
+    && steps.reduce((total, step) => total + Math.abs(step), 0) >= 3;
+  let motif = drawMotif();
+  for (let attempt = 0; attempt < 24 && !singable(motif); attempt++) motif = drawMotif();
   const openings = Array.from({ length: PHRASE_COUNT }, () => pick(5) - 2);
 
   const phrases = ROLES.map((shape, index) => {

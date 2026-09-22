@@ -93,7 +93,43 @@ Artwork and registry reads are public and need no wallet. Ownership is verified
 separately by the SDK runtime, which Chorus does not reimplement.
 
 Across 27,000 generated family/seed combinations the composer produced **27,000
-distinct songs**, every note falling between E2 (82 Hz) and G#6 (1661 Hz).
+distinct songs**, every note falling between E2 (82 Hz) and G#6 (1661 Hz). Every
+refrain resolves onto the tonic and spans at least three semitones, so no Friend
+is handed a monotone payoff phrase.
+
+### Verified against the live chain
+
+Artwork and trait reads are public view/pure functions, so this needs no wallet:
+
+```sh
+npm run verify:live        # read real Friends from mainnet and compose their songs
+npm run artifact:friends   # render the sheet below
+```
+
+![Seven real mainnet Friends and their voices](artifacts/real-friends.png)
+
+Seven real, minted, generation ≥ 1 Friends covering seven of the nine families,
+read live from Robinhood mainnet — each with its genuine on-chain sprite and the
+song its own family and seed compose:
+
+| Friend | Family | Voice | Key / tempo |
+| --- | --- | --- | --- |
+| #444 | Skeleton | Bone flute | A @ 85 BPM |
+| #87846 | Mask | Masked reed | C# @ 100 BPM |
+| #40000 | Family | Hearth chime | F @ 99 BPM |
+| #65001 | Cellular | Cell pulse | E @ 121 BPM |
+| #15000 | Asymmetry | Skew string | G# @ 99 BPM |
+| #7730 | Hoverer | Hover glass | D @ 77 BPM |
+| #20838 | Colossus | Colossus horn | B @ 59 BPM |
+
+`verify:live` fails if any two real Friends compose the same song, if any note
+falls outside the audible band, or if any Friend would render no pixels.
+
+**Friend #7730, used by the SDK's automated fixture, is itself a real minted
+mainnet Friend** (Hoverer, seed 7730), and the SDK's recorded sample frames are
+byte-identical to the live registry's. The screenshots in this repository
+therefore show a real Friend's real artwork playing its real song; only the
+wallet and ownership check are mocked.
 
 ## Accessibility
 
