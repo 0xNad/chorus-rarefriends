@@ -98,6 +98,19 @@ distinct songs**, every note falling between E2 (82 Hz) and G#6 (1661 Hz). Every
 refrain resolves onto the tonic and spans at least three semitones, so no Friend
 is handed a monotone payoff phrase.
 
+### Demo
+
+[**Watch the 60-second demo**](artifacts/chorus-demo.mp4) — buy a pack, capture
+phrases, echo one in time, then play the whole arrangement.
+
+Recorded from the real runtime with `npm run demo`. Playwright records video but
+never audio, so the page's own audio graph is tapped: anything reaching an
+`AudioContext` destination is also routed to a `MediaStreamDestination` that
+`MediaRecorder` captures. **The soundtrack is the game's actual output**, not a
+reproduction rendered separately. Wallet and ownership are the SDK's read-only
+test fixtures, and Friend #7730 is a real mainnet token whose recorded frames
+match the live registry.
+
 ### Verified against the live chain
 
 Artwork and trait reads are public view/pure functions, so this needs no wallet:
