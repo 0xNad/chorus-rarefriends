@@ -175,8 +175,12 @@ is six notes, and the scoring formula gives a single matched note
 `round((1/6) × 60) = 10` — exactly what the HUD shows. Echo hit detection
 therefore works on real hardware, not only under the automated check.
 
-Still not exercised with a wallet connected: **redeem**, and phone wallet
-browsers. The automated browser check covers redeem against the real runtime.
+**Redeem and the phone wallet browser were confirmed by the builder** on a real
+wallet, without a captured screenshot. They are recorded as builder-reported
+rather than evidenced here, unlike the sessions above, whose composed identity
+and Resonance figure are independently derivable from the chain and the
+composition. The automated browser check also covers redeem against the real
+runtime, and the portrait layout is checked at 360 px on every run.
 
 ## Accessibility
 
