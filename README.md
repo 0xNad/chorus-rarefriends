@@ -23,7 +23,7 @@ Needs **Node.js 22+** and a browser wallet on **Robinhood mainnet (chain 4663)**
 holding a hardwired Generations NFT, **generation 1 or higher**.
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
@@ -39,7 +39,7 @@ npm run dev:lan
 Then open `http://YOUR_LAN_IP:4173` in a wallet browser on the phone.
 
 The FriendSDK package is not published to npm, so it is vendored in `vendor/` as
-the archive built from the v0.1.2 source. `npm install` resolves it from there,
+the archive built from the v0.1.2 source. `npm ci` resolves it from there,
 which keeps this repository self-contained and reproducible.
 
 ## How to play

@@ -25,7 +25,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
+      # ci, not install: build the preview from the committed lockfile exactly.
+      - run: npm ci
       - run: npm run check
       - run: npm run build
       # Pages must not run Jekyll over the generated bundle.
