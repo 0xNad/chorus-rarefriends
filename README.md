@@ -131,6 +131,34 @@ byte-identical to the live registry's. The screenshots in this repository
 therefore show a real Friend's real artwork playing its real song; only the
 wallet and ownership check are mocked.
 
+### Holder verification
+
+![Chorus running for holder-owned Friend #1969](artifacts/holder-friend-1969.png)
+
+Chorus running on the deployed preview with a real browser wallet on Robinhood
+mainnet, for a Friend the player actually owns. The SDK's fresh ownership gate
+passed and its picker selected **Friend #1969**, whose canonical artwork is drawn
+from a live registry read.
+
+The header reads `Skew string · key E · 88 BPM`. Reading that token independently
+from mainnet gives the same thing:
+
+```
+$ npm run verify:live -- 1969
+Friend #1969
+  minted        yes (generation 1)
+  family        4 Asymmetry
+  seed          1969
+  voice         Skew string (sawtooth)
+  key / tempo   E @ 88 BPM
+```
+
+A Friend nobody had composed for before, matching an independent chain read
+exactly. This confirms real-wallet selection, the ownership gate and live artwork
+and trait reads for an arbitrary holder-owned token. The session is freshly
+loaded — 20 RF, 0 Tones, 0/8 phrases — so it does not itself exercise the
+capture loop, which the automated browser check covers instead.
+
 ## Accessibility
 
 - **Fully playable with sound off.** Every note is also a bar on the note ribbon
